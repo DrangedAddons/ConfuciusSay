@@ -1,0 +1,7 @@
+<Bindings>
+  <!-- Posts a random saying to the last chat you typed in (say, party, guild, a channel, a
+       whisper...). No default key: set one under Options > Keybindings > AddOns > ConfuciusSay. -->
+  <Binding name="CONFUCIUSSAY_SEND" header="CONFUCIUSSAY" category="ADDONS" runOnUp="false">
+    ConfuciusSay_SendRandom()
+  </Binding>
+</Bindings>

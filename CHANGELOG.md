@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0
+- **/cs** posts a random saying whenever you like, to the chat you're typing in: say, yell, party, guild, officer, raid, instance, General/Trade or any numbered channel, a whisper or a Battle.net whisper (so `/r` then `/cs` replies). Works on any character, no keyword or cooldown.
+- `/cs g`, `/cs p`, `/cs raid`, `/cs s`, `/cs 2` (channel number), `/cs r` (reply to your last whisper) pick the chat instead.
+- Key binding "Send a saying to your current chat" (Options > Keybindings > AddOns > ConfuciusSay): sends to the last chat you typed in.
+
 ## 0.3.0
 - **Battle.net whispers** trigger replies too, on by default with the default keywords. The reply goes back as a Battle.net whisper. Switch it off or give it its own keywords on the Triggers tab.
 

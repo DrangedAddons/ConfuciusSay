@@ -603,8 +603,10 @@ function builders.general(p)
         function(v) CS.SetMinimapShown(v) end)
     mm:SetPoint("TOPLEFT", 0, -300)
 
-    Note(p, "/csay opens this window. /csay test prints a random saying that only you see. /csay on, /csay off.",
-        0, -340, 640)
+    Note(p, "/csay opens this window. /csay test prints a random saying that only you see. /csay on, /csay off.\n\n"
+        .. "|cffffd100/cs|r posts a random saying to the chat you're typing in: say, party, guild, raid, General, "
+        .. "Trade, a whisper or /r. /cs g, /cs p, /cs raid, /cs 2, /cs r (reply) pick the chat. Key binding: "
+        .. "Options > Keybindings > AddOns > ConfuciusSay.", 0, -340, 640)
 end
 
 ---------------------------------------------------------

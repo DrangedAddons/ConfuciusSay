@@ -15,6 +15,7 @@ A World of Warcraft addon for WoW Forever (and the Classic beta). On a character
 
 ## Using it
 - `/csay` (or `/confuciussay`), the minimap button, the addon list button or Options > AddOns > ConfuciusSay opens the settings.
+- `/cs` posts a random saying to the chat you're typing in, any time: say, party, guild, raid, General, Trade, a whisper or `/r`. `/cs g`, `/cs p`, `/cs raid`, `/cs 2`, `/cs r` (reply to your last whisper) pick the chat instead. There's also a key binding under Options > Keybindings > AddOns.
 - `/csay test` prints a random saying in your chat (only you see it).
 - `/csay on` / `/csay off`.
 - Which characters reply is set on the General tab ("Only on characters whose name contains"). Empty means every character.
