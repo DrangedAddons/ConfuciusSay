@@ -228,7 +228,7 @@ end
 function CS.Send(text, chatType, target)
     local ok, err
     if chatType == "BN" then
-        ok, err = pcall(BNSendWhisper, target, text)
+        ok, err = pcall((C_BattleNet and C_BattleNet.SendWhisper) or BNSendWhisper, target, text)
     else
         local send = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
         ok, err = pcall(send, text, chatType, nil, target)
@@ -367,6 +367,27 @@ local function SendTo(chatType, target)
     CS.Send(CS.Format(s), chatType, target)
 end
 
+-- WIM: /cs typed in a WIM window gets copied into the main chat box (still on say) and sent
+-- from there, but the WIM message box keeps keyboard focus, so its window says where to send.
+local WIM_CHAT = { guild = "GUILD", officer = "OFFICER", party = "PARTY", raid = "RAID",
+    battleground = "INSTANCE_CHAT", say = "SAY", channel = "CHANNEL" }
+
+local function WIMTarget(editBox)
+    if not WIM or not GetCurrentKeyBoardFocus then return end
+    local focus = GetCurrentKeyBoardFocus()
+    if not focus or focus == editBox or not focus.GetParent then return end
+    local win = focus:GetParent()
+    if not (win and win.widgets and win.widgets.msg_box == focus) then return end
+    if win.type == "whisper" or win.type == "w2w" then
+        if win.bn and win.bn.id then return "BN", win.bn.id end
+        if win.theUser then return "WHISPER", win.theUser end
+    elseif win.type == "chat" then
+        local chatType = WIM_CHAT[win.chatType]
+        if chatType == "CHANNEL" then return chatType, tonumber(win.channelNumber) end
+        return chatType
+    end
+end
+
 -- editBox: the chat box /cs was typed in (the game passes it to slash handlers); without one
 -- (the key binding) the main chat box, which remembers the last chat you typed in.
 function CS.SendRandom(where, editBox)
@@ -386,6 +407,12 @@ function CS.SendRandom(where, editBox)
             return SendTo(lastType == "BN_WHISPER" and "BN_WHISPER" or "WHISPER", last)
         end
         return SendTo(t)
+    end
+
+    local wimType, wimTarget = WIMTarget(editBox)
+    if wimType then
+        if wimType == "CHANNEL" and not wimTarget then CS.Print("no channel selected.") return end
+        return SendTo(wimType, wimTarget)
     end
 
     local eb = editBox or (ChatEdit_GetActiveWindow and ChatEdit_GetActiveWindow())

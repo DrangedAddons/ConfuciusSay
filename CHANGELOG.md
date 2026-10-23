@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.1
+- **/cs in a WIM window** now sends to that window: the whisper (or Battle.net whisper) you're in, or WIM's guild/party/raid/channel window. Before, WIM passed /cs to the main chat box, which was on /say.
+
 ## 0.4.0
 - **/cs** posts a random saying whenever you like, to the chat you're typing in: say, yell, party, guild, officer, raid, instance, General/Trade or any numbered channel, a whisper or a Battle.net whisper (so `/r` then `/cs` replies). Works on any character, no keyword or cooldown.
 - `/cs g`, `/cs p`, `/cs raid`, `/cs s`, `/cs 2` (channel number), `/cs r` (reply to your last whisper) pick the chat instead.
