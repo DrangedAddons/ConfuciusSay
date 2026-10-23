@@ -1,12 +1,13 @@
 # ConfuciusSay
 
-A World of Warcraft addon for WoW Forever (and the Classic beta). On a character whose name contains "confucius", anyone who whispers you "confucius" gets a random Confucius say whispered back:
+A World of Warcraft addon for WoW Forever (and the Classic beta). On a character whose name contains "confucius", anyone who whispers you "confucius" (in-game or Battle.net) gets a random Confucius say whispered back:
 
 > Confucius say, man who run behind bus get exhausted
 
 ## Features
 - **124 sayings built in:** the pun kind, not the real ones. 61 are tagged rude; filter on Rude or Clean to switch whole groups on or off.
 - **Your list:** turn each saying on or off, add your own (one at a time, or paste a block with one saying per line), edit or remove any. Removed defaults can be put back with Restore defaults.
+- **Battle.net whispers** work too (on by default) and get a Battle.net whisper back.
 - **Keywords:** comma-separated, any case, anywhere in the message.
 - **Guild, party and raid chat (off by default):** each can use the default keywords or its own, and post the reply in that chat or whisper it to the sender.
 - **No repeats** until every active saying has been used. Per-player and group-chat cooldowns, and a short delay before replying.

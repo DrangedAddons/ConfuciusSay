@@ -15,9 +15,10 @@ CS.ICON = "Interface\\AddOns\\ConfuciusSay\\icon"
 --  SECTION: Settings
 ---------------------------------------------------------
 -- Channels that can trigger a reply. replyInChannel: answer in that chat (true) or whisper the
--- sender (false). Whispers always answer by whisper.
+-- sender (false). Whispers always answer by whisper; bn = Battle.net, answered with BNSendWhisper.
 CS.CHANNELS = {
     { key = "whisper", label = "Whispers",   events = { "CHAT_MSG_WHISPER" } },
+    { key = "bnet",    label = "Battle.net whispers", events = { "CHAT_MSG_BN_WHISPER" }, bn = true },
     { key = "guild",   label = "Guild chat", events = { "CHAT_MSG_GUILD" }, chatType = "GUILD" },
     { key = "party",   label = "Party chat", events = { "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER" }, chatType = "PARTY" },
     { key = "raid",    label = "Raid chat",  events = { "CHAT_MSG_RAID", "CHAT_MSG_RAID_LEADER" }, chatType = "RAID" },
@@ -33,6 +34,7 @@ local DEFAULTS = {
     groupCooldown = 30,     -- seconds between replies posted in guild/party/raid chat
     channels = {
         whisper = { on = true,  useDefault = true, keywords = "", replyInChannel = false },
+        bnet    = { on = true,  useDefault = true, keywords = "", replyInChannel = false },
         guild   = { on = false, useDefault = true, keywords = "", replyInChannel = true },
         party   = { on = false, useDefault = true, keywords = "", replyInChannel = true },
         raid    = { on = false, useDefault = true, keywords = "", replyInChannel = true },
@@ -222,23 +224,39 @@ local function IsASaying(lower)
     return false
 end
 
+-- chatType "BN": target is the sender's Battle.net account ID.
 function CS.Send(text, chatType, target)
-    local send = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
-    local ok, err = pcall(send, text, chatType, nil, target)
+    local ok, err
+    if chatType == "BN" then
+        ok, err = pcall(BNSendWhisper, target, text)
+    else
+        local send = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
+        ok, err = pcall(send, text, chatType, nil, target)
+    end
     if not ok then CS.Print("couldn't send the reply: " .. tostring(err)) end
 end
 
 local lastByPlayer, lastInChannel = {}, {}
 
-local function OnChat(chan, msg, sender)
+local function OnChat(chan, msg, sender, ...)
     local db = CS.db
     if not db.enabled then return end
     local c = db.channels[chan.key]
     if not c.on or not CS.IsActiveHere() then return end
     -- Forever can hide chat text from addons (secret values), e.g. in encounters
     if IsSecret(msg) or IsSecret(sender) then return end
-    if type(msg) ~= "string" or type(sender) ~= "string" or sender == "" then return end
-    if IsMe(sender) then return end
+    if type(msg) ~= "string" then return end
+    -- Battle.net: the name is a protected |K string, so the account ID (13th event arg) is who
+    -- sent it, for the reply and the cooldown. Your own Battle.net whispers arrive as
+    -- CHAT_MSG_BN_WHISPER_INFORM, so there's no self check.
+    local bnID
+    if chan.bn then
+        bnID = select(11, ...)
+        if IsSecret(bnID) or type(bnID) ~= "number" or bnID == 0 then return end
+    else
+        if type(sender) ~= "string" or sender == "" then return end
+        if IsMe(sender) then return end
+    end
 
     local lower = msg:lower()
     local hit = false
@@ -248,7 +266,7 @@ local function OnChat(chan, msg, sender)
     if not hit or IsASaying(lower) then return end
 
     local now = GetTime()
-    local who = sender:lower()
+    local who = bnID and ("bn:" .. bnID) or sender:lower()
     if lastByPlayer[who] and now - lastByPlayer[who] < (db.playerCooldown or 0) then return end
     local inChannel = chan.chatType and c.replyInChannel
     if inChannel then
@@ -261,7 +279,11 @@ local function OnChat(chan, msg, sender)
     if not s then return end
     local text = CS.Format(s)
     local chatType, target = "WHISPER", sender
-    if inChannel then chatType, target = chan.chatType, nil end
+    if bnID then
+        chatType, target = "BN", bnID
+    elseif inChannel then
+        chatType, target = chan.chatType, nil
+    end
     C_Timer.After(math.max(0, db.delay or 0), function() CS.Send(text, chatType, target) end)
 end
 

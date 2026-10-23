@@ -502,19 +502,19 @@ function builders.triggers(p)
 
         local box = CreateFrame("Frame", nil, p, "BackdropTemplate")
         box:SetPoint("TOPLEFT", 0, y)
-        box:SetSize(672, 70)
+        box:SetSize(672, 60)
         UI.Backdrop(box, 0.08, 0.08, 0.09, 0.9)
 
-        local main = UI.Check(box, chan.chatType and ("Reply to " .. chan.label:lower()) or "Reply to whispers",
+        local main = UI.Check(box, "Reply to " .. (chan.bn and chan.label or chan.label:lower()),
             function() return c().on end, function(v) c().on = v end)
-        main:SetPoint("TOPLEFT", 8, -6)
+        main:SetPoint("TOPLEFT", 8, -4)
         main.label:SetFontObject(GameFontNormal)
 
         local inChannel
         if chan.chatType then
             inChannel = UI.Check(box, "Post the reply in " .. chan.label:lower(),
                 function() return c().replyInChannel end, function(v) c().replyInChannel = v end)
-            inChannel:SetPoint("TOPLEFT", 300, -6)
+            inChannel:SetPoint("TOPLEFT", 300, -4)
             inChannel:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_TOP")
                 GameTooltip:AddLine("Checked: everyone in " .. chan.label:lower() .. " sees the reply.", 1, 1, 1, true)
@@ -526,11 +526,11 @@ function builders.triggers(p)
 
         local useDefault = UI.Check(box, "Use default keywords",
             function() return c().useDefault end, function(v) c().useDefault = v end)
-        useDefault:SetPoint("TOPLEFT", 32, -36)
+        useDefault:SetPoint("TOPLEFT", 32, -30)
 
         local own = UI.Edit(box, 330, 200, function() return c().keywords end, function(v) c().keywords = v end)
         own.allowEmpty = true
-        own:SetPoint("TOPLEFT", 300, -38)
+        own:SetPoint("TOPLEFT", 300, -32)
         local ownHint = UI.Text(box, "Own keywords:", "GameFontHighlightSmall")
         ownHint:SetPoint("RIGHT", own, "LEFT", -10, 0)
 
@@ -543,7 +543,7 @@ function builders.triggers(p)
             ownHint:SetTextColor(v, v, v)
         end)
 
-        y = y - 78
+        y = y - 66
     end
 
     Note(p, "Your own messages and other players' Confucius sayings never trigger a reply, so two players "

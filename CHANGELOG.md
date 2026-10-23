@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.0
+- **Battle.net whispers** trigger replies too, on by default with the default keywords. The reply goes back as a Battle.net whisper. Switch it off or give it its own keywords on the Triggers tab.
+
 ## 0.2.0
 - **Add many...** on the Sayings tab: paste or type a block of sayings, one per line, and add them all at once. A leading "Confucius say," on a line is dropped (replies add it), and blank lines and sayings already in the list are skipped. The list then shows "Added by me" with the new ones at the bottom.
 
