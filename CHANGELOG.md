@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.0
+- **Add many...** on the Sayings tab: paste or type a block of sayings, one per line, and add them all at once. A leading "Confucius say," on a line is dropped (replies add it), and blank lines and sayings already in the list are skipped. The list then shows "Added by me" with the new ones at the bottom.
+
 ## 0.1.0
 - First version. On a character whose name contains "confucius", a whisper containing a keyword (default "confucius") gets a random Confucius say whispered back.
 - 124 sayings built in: the 100 from trees-and-lambdas.info (61 tagged rude), plus WoW and clean ones. A shuffled deck, so nobody hears a repeat until the list has gone round.

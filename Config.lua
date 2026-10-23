@@ -347,6 +347,100 @@ function builders.sayings(p)
     end)
     rudeCheck:SetPoint("LEFT", removeBtn, "RIGHT", 10, 0)
 
+    -- Add many: a big text box over the window, one saying per line.
+    local bulk
+    local function BuildBulk()
+        bulk = CreateFrame("Frame", nil, win, "BackdropTemplate")
+        bulk:SetSize(620, 420)
+        bulk:SetPoint("CENTER", win, "CENTER", 0, -10)
+        bulk:SetFrameStrata("DIALOG")
+        bulk:EnableMouse(true)
+        UI.Backdrop(bulk, 0.06, 0.06, 0.07, 0.99, 1, 0.82, 0, 1)
+
+        local t = UI.Text(bulk, "Add many sayings", "GameFontNormalLarge")
+        t:SetPoint("TOPLEFT", 14, -12)
+        local n = Note(bulk, "Paste or type them below, one saying per line. A leading \"Confucius say,\" is "
+            .. "dropped (replies add it). Blank lines and sayings already in the list are skipped.", 14, -36, 590)
+
+        local holder = CreateFrame("Frame", nil, bulk, "BackdropTemplate")
+        holder:SetPoint("TOPLEFT", 14, -70)
+        holder:SetPoint("BOTTOMRIGHT", -14, 44)
+        UI.Backdrop(holder, 0.02, 0.02, 0.025, 1)
+
+        local sf = CreateFrame("ScrollFrame", nil, holder)
+        sf:SetPoint("TOPLEFT", 6, -6)
+        sf:SetPoint("BOTTOMRIGHT", -6, 6)
+        local box = CreateFrame("EditBox", nil, sf)
+        box:SetMultiLine(true)
+        box:SetAutoFocus(false)
+        box:SetMaxLetters(0)
+        box:SetFontObject(ChatFontNormal)
+        box:SetWidth(570)
+        box:SetHeight(300)
+        box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+        sf:SetScrollChild(box)
+        bulk.box = box
+
+        -- keep the cursor in view while typing, and scroll with the wheel
+        local function MaxScroll() return math.max(0, box:GetHeight() - sf:GetHeight()) end
+        box:SetScript("OnCursorChanged", function(_, _, y, _, h)
+            local top = sf:GetVerticalScroll()
+            y = -y
+            if y < top then
+                sf:SetVerticalScroll(y)
+            elseif y + h > top + sf:GetHeight() then
+                sf:SetVerticalScroll(math.min(MaxScroll(), y + h - sf:GetHeight()))
+            end
+        end)
+        sf:EnableMouseWheel(true)
+        sf:SetScript("OnMouseWheel", function(self, delta)
+            self:SetVerticalScroll(math.max(0, math.min(MaxScroll(), self:GetVerticalScroll() - delta * 40)))
+        end)
+        -- clicking anywhere in the box area focuses the text
+        holder:EnableMouse(true)
+        holder:SetScript("OnMouseDown", function() box:SetFocus() end)
+
+        local lines = UI.Text(bulk, "", "GameFontHighlightSmall")
+        lines:SetPoint("BOTTOMLEFT", 16, 18)
+        lines:SetTextColor(0.75, 0.75, 0.75)
+        box:SetScript("OnTextChanged", function(self)
+            local c = 0
+            for l in self:GetText():gmatch("[^\r\n]+") do
+                if strtrim(l) ~= "" then c = c + 1 end
+            end
+            lines:SetText(c .. (c == 1 and " line" or " lines"))
+        end)
+
+        local cancel = UI.Button(bulk, "Cancel", 100, 22, function() bulk:Hide() end)
+        cancel:SetPoint("BOTTOMRIGHT", -14, 12)
+        local addAll = UI.Button(bulk, "Add all", 100, 22, function()
+            local added, dupes = CS.AddMany(box:GetText())
+            CS.Print(string.format("added %d saying%s%s.", added, added == 1 and "" or "s",
+                dupes > 0 and string.format(", skipped %d already in the list", dupes) or ""))
+            bulk:Hide()
+            filter, search = "mine", ""
+            searchBox:SetText("")
+            offset = 0
+            UpdateList()
+            ScrollTo(#shown)
+        end)
+        addAll:SetPoint("RIGHT", cancel, "LEFT", -6, 0)
+
+        bulk:SetScript("OnShow", function()
+            box:SetText("")
+            sf:SetVerticalScroll(0)
+            box:SetFocus()
+        end)
+        p:HookScript("OnHide", function() bulk:Hide() end)
+        bulk:Hide()
+    end
+
+    local manyBtn = UI.Button(p, "Add many...", 110, 22, function()
+        if not bulk then BuildBulk() end
+        bulk:Show()
+    end)
+    manyBtn:SetPoint("TOPRIGHT", -4, edY - 48)
+
     editor:SetScript("OnEnterPressed", function(self)
         if selected then saveBtn:Click() else addBtn:Click() end
         self:ClearFocus()

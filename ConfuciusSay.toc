@@ -2,7 +2,7 @@
 ## Title: ConfuciusSay
 ## Notes: Whisper "confucius" to a Confucius character and get a random (silly) Confucius say back. Guild, party and raid chat optional, with their own keywords.
 ## Author: Dranged
-## Version: 0.1.0
+## Version: 0.2.0
 ## X-DrangedAddons-Games: _classic_beta_, _forever_
 ## SavedVariables: ConfuciusSayDB
 ## IconTexture: Interface\AddOns\ConfuciusSay\icon

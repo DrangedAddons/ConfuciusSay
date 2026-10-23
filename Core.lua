@@ -92,6 +92,31 @@ function CS.AddSaying(text)
     return s
 end
 
+-- One saying per line. A leading "Confucius say," / "Confucius says:" is dropped (the reply
+-- prefix adds it back), as are blank lines and sayings already in the list.
+-- Returns added, skipped duplicates.
+function CS.AddMany(text)
+    local have = {}
+    for _, s in ipairs(CS.db.sayings) do have[s.text:lower()] = true end
+    local added, dupes = 0, 0
+    for line in (text or ""):gmatch("[^\r\n]+") do
+        line = strtrim(line)
+        local rest = line:lower():match("^confucius says?%s*[,:%-]?%s*()")
+        if rest then line = strtrim(line:sub(rest)) end
+        if line ~= "" then
+            if #line > 230 then line = line:sub(1, 230) end
+            if have[line:lower()] then
+                dupes = dupes + 1
+            else
+                have[line:lower()] = true
+                CS.AddSaying(line)
+                added = added + 1
+            end
+        end
+    end
+    return added, dupes
+end
+
 function CS.RemoveSaying(s)
     for i, t in ipairs(CS.db.sayings) do
         if t == s then
