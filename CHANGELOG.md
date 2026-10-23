@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.2
+- **/cs r** works again: ConfuciusSay now remembers who whispered you last (in-game or Battle.net) itself, instead of asking the game, which said nobody had. Works with WIM.
+
 ## 0.4.1
 - **/cs in a WIM window** now sends to that window: the whisper (or Battle.net whisper) you're in, or WIM's guild/party/raid/channel window. Before, WIM passed /cs to the main chat box, which was on /say.
 

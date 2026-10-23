@@ -238,6 +238,28 @@ end
 
 local lastByPlayer, lastInChannel = {}, {}
 
+-- Who whispered you last, for /cs r. Kept here because Forever may not have the game's
+-- ChatEdit_GetLastTellTarget, and WIM takes over /r anyway.
+local lastTell, lastTellType
+
+function CS.NoteTell(chan, msg, sender, ...)
+    if chan.bn then
+        local id = select(11, ...)
+        if not IsSecret(id) and type(id) == "number" and id ~= 0 then lastTell, lastTellType = id, "BN" end
+    elseif not IsSecret(sender) and type(sender) == "string" and sender ~= "" then
+        lastTell, lastTellType = sender, "WHISPER"
+    end
+end
+
+function CS.LastTell()
+    if lastTell then return lastTell, lastTellType end
+    local get = ChatEdit_GetLastTellTarget or (ChatFrameUtil and ChatFrameUtil.GetLastTellTarget)
+    local last, kind
+    if get then last, kind = get() end
+    if not last or last == "" then return end
+    return last, kind == "BN_WHISPER" and "BN_WHISPER" or "WHISPER"
+end
+
 local function OnChat(chan, msg, sender, ...)
     local db = CS.db
     if not db.enabled then return end
@@ -315,6 +337,7 @@ f:SetScript("OnEvent", function(_, event, ...)
         end
     else
         local chan = byEvent[event]
+        if chan and (chan.key == "whisper" or chan.bn) then CS.NoteTell(chan, ...) end
         if chan and CS.db then OnChat(chan, ...) end
     end
 end)
@@ -401,10 +424,9 @@ function CS.SendRandom(where, editBox)
             return
         end
         if t == "REPLY" then
-            local last, lastType
-            if ChatEdit_GetLastTellTarget then last, lastType = ChatEdit_GetLastTellTarget() end
-            if not last or last == "" then CS.Print("nobody to reply to yet.") return end
-            return SendTo(lastType == "BN_WHISPER" and "BN_WHISPER" or "WHISPER", last)
+            local last, kind = CS.LastTell()
+            if not last then CS.Print("nobody has whispered you since you logged in.") return end
+            return SendTo(kind, last)
         end
         return SendTo(t)
     end
