@@ -1,6 +1,6 @@
 # ConfuciusSay
 
-A World of Warcraft addon for WoW Forever (and the Classic beta). On a character whose name contains "confucius", anyone who whispers you "confucius" (in-game or Battle.net) gets a random Confucius say whispered back:
+A World of Warcraft addon for WoW Forever. On a character whose name contains "confucius", anyone who whispers you "confucius" (in-game or Battle.net) gets a random Confucius say whispered back:
 
 > Confucius say, man who run behind bus get exhausted
 

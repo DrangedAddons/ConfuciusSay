@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0
+- First live release for WoW Forever. The addon is now listed for Forever only (the Classic beta has ended). No changes in game.
+
 ## 0.4.2
 - **/cs r** works again: ConfuciusSay now remembers who whispered you last (in-game or Battle.net) itself, instead of asking the game, which said nobody had. Works with WIM.
 
