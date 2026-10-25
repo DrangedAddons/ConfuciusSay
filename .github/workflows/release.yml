@@ -29,7 +29,7 @@ jobs:
       - name: Build zip
         run: |
           mkdir -p build/ConfuciusSay
-          rsync -a --exclude='.git*' --exclude='.github' --exclude='build' --exclude='tools' ./ build/ConfuciusSay/
+          rsync -a --exclude='.git*' --exclude='.github' --exclude='build' --exclude='screenshots' --exclude='tools' ./ build/ConfuciusSay/
           cd build && zip -qr "../ConfuciusSay-${GITHUB_REF_NAME}.zip" ConfuciusSay
 
       # Every CHANGELOG section since the previous release, so versions that were never tagged on
