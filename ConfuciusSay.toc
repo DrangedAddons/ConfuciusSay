@@ -4,6 +4,9 @@
 ## Author: Dranged
 ## Version: 1.0.0
 ## X-DrangedAddons-Games: _forever_
+## X-DrangedHub-Frame: ConfuciusSayConfig
+## X-DrangedHub-Open: /csay
+## X-DrangedHub-Crop: 34
 ## OptionalDeps: WIM
 ## SavedVariables: ConfuciusSayDB
 ## IconTexture: Interface\AddOns\ConfuciusSay\icon
